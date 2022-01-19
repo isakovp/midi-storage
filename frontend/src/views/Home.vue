@@ -1,7 +1,6 @@
 <template>
   <layout>
-    <FilesCardView v-if="topFiles" :loading="topFilesLoading" :top-files="topFiles" @loadmore="loadMore"
-                   @select="select"/>
+    <FilesCardView v-if="topFiles" :loading="topFilesLoading" :top-files="topFiles" @loadmore="loadMore"/>
   </layout>
 </template>
 
@@ -47,13 +46,6 @@ export default {
       }
     }
 
-    const select = (id) => {
-      router.push({
-        name: 'File',
-        params: { id: id }
-      })
-    }
-
     onMounted(() => {
       appendFiles(0)
     })
@@ -72,7 +64,6 @@ export default {
       loadMore,
       topFiles,
       topFilesLoading,
-      select,
       filter
     }
   }

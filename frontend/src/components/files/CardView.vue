@@ -4,7 +4,7 @@
       <div class="card h-100">
         <div class="card-body">
           <h5 class="card-title">
-            <a href="#" @click="handleClick(file.id)">{{ file.name }}</a>
+            <router-link :to="{name: 'File', params: { id: file.id }}">{{ file.name }}</router-link>
           </h5>
           <p class="card-text">{{ file.description }}</p>
         </div>
@@ -58,10 +58,6 @@ export default {
       }
     }
 
-    const handleClick = (id) => {
-      emit('select', id)
-    }
-
     onMounted(() => {
       window.addEventListener('scroll', handleScroll)
     })
@@ -72,8 +68,7 @@ export default {
 
     return {
       scrollComponent,
-      handleScroll,
-      handleClick
+      handleScroll
     }
   }
 }
