@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import NavBar from '@/components/common/NavBar'
 import SignIn from '@/views/SignIn'
 import Home from '@/views/Home.vue'
 import FileShow from '@/views/files/Show'
@@ -16,7 +17,10 @@ const routes = [
   {
     path: '/:filter?',
     name: 'Home',
-    component: Home,
+    components: {
+      default: Home,
+      navbar: NavBar
+    },
     meta: {
       requiresAuth: true
     }
@@ -24,7 +28,10 @@ const routes = [
   {
     path: '/files/:id',
     name: 'File',
-    component: FileShow,
+    components: {
+      default: FileShow,
+      navbar: NavBar
+    },
     meta: {
       breadcrumbs: [
         { name: 'Home', label: 'Home' }
@@ -35,7 +42,10 @@ const routes = [
   {
     path: '/profile',
     name: 'Profile',
-    component: Profile,
+    components: {
+      default: Profile,
+      navbar: NavBar
+    },
     meta: {
       breadcrumbs: [
         { name: 'Home', label: 'Home' }

@@ -1,11 +1,8 @@
 <template>
-  <layout>
-    <FilesCardView v-if="topFiles" :loading="topFilesLoading" :top-files="topFiles" @loadmore="loadMore"/>
-  </layout>
+  <FilesCardView v-if="topFiles" :loading="topFilesLoading" :top-files="topFiles" @loadmore="loadMore"/>
 </template>
 
 <script>
-import Layout from '@/components/common/Layout'
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import FilesCardView from '@/components/files/CardView'
@@ -14,7 +11,6 @@ import FilesApi from '@/api/FilesApi'
 export default {
   name: 'Home',
   components: {
-    Layout,
     FilesCardView
   },
   setup () {

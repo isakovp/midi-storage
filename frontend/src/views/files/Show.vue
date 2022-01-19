@@ -1,40 +1,35 @@
 <template>
-  <layout>
-    <template v-slot:breadcrumb>
-      {{ file ? file.name : nil }}
-    </template>
-    <div class="row">
-      <div class="col" v-if="!file">
-        <h1>File not found</h1>
-      </div>
+  <div class="row">
+    <div class="col" v-if="!file">
+      <h1>File not found</h1>
     </div>
-    <div class="row justify-content-center">
-      <div class="col-md-10 col-11 text-center" v-if="file">
-        <figure>
-          <blockquote class="blockquote">
-            <h1 class="header">{{ file.name }}</h1>
-            <small class="views">
-              <i class="bi-eye"></i> {{ file.views }}
-            </small>
-          </blockquote>
-          <figcaption class="blockquote-footer">
-            {{ file.description }}
-          </figcaption>
-        </figure>
-      </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-11 text-center" v-if="file">
+      <figure>
+        <blockquote class="blockquote">
+          <h1 class="header">{{ file.name }}</h1>
+          <small class="views">
+            <i class="bi-eye"></i> {{ file.views }}
+          </small>
+        </blockquote>
+        <figcaption class="blockquote-footer">
+          {{ file.description }}
+        </figcaption>
+      </figure>
     </div>
-    <div class="row justify-content-center">
-      <div class="col-md-10 col-11" v-if="file">
-        <midi-player
-          ref="player"
-          :src="file.url"
-          sound-font
-          :visualizer="'#player-' + file.id">
-        </midi-player>
-        <midi-visualizer type="staff" :id="'player-' + file.id" :src="file.url"></midi-visualizer>
-      </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-11" v-if="file">
+      <midi-player
+        ref="player"
+        :src="file.url"
+        sound-font
+        :visualizer="'#player-' + file.id">
+      </midi-player>
+      <midi-visualizer type="staff" :id="'player-' + file.id" :src="file.url"></midi-visualizer>
     </div>
-  </layout>
+  </div>
 </template>
 
 <script>
@@ -42,13 +37,9 @@
 import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import FilesApi from '@/api/FilesApi'
-import Layout from '@/components/common/Layout'
 
 export default {
   name: 'Show',
-  components: {
-    Layout
-  },
   setup () {
     const file = ref({})
     const player = ref(null)
@@ -60,6 +51,7 @@ export default {
 
     const getFile = async function () {
       try {
+        console.log(window.test.test)
         const response = await FilesApi.get(fileId.value)
         file.value = response.data
       } catch (e) {

@@ -1,8 +1,4 @@
 <template>
-  <layout>
-    <template v-slot:header>
-      <empty-slot/>
-    </template>
     <div class="row justify-content-center mt-5">
       <div class="col-xxl-3 col-xl-4 3 col-lg-4 col-md-6 col-12">
         <h1>Sign In</h1>
@@ -28,23 +24,16 @@
         </form>
       </div>
     </div>
-  </layout>
 </template>
 
 <script>
 import { ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
-import Layout from '@/components/common/Layout'
-import EmptySlot from '@/components/common/EmptySlot'
 import AuthenticationApi from '@/api/AuthenticationApi'
 
 export default {
   name: 'SignIn',
-  components: {
-    Layout,
-    EmptySlot
-  },
   setup () {
     const username = ref(null)
     const password = ref(null)

@@ -1,5 +1,13 @@
 <template>
-  <router-view></router-view>
+  <router-view name="navbar"></router-view>
+  <div class="alert alert-danger fixed-top alert-dismissible fade show" v-if="error" role="alert">
+    <i class="bi-exclamation-triangle-fill"></i>
+    Oops. Something went wrong
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @click="error = null"></button>
+  </div>
+  <div class="container-fluid">
+    <router-view></router-view>
+  </div>
   <div class="dev-screen-size" v-if="devMode">
     <div class="d-block d-sm-none">Screen: XS</div>
     <div class="d-none d-sm-block d-md-none">Screen: SM</div>
@@ -11,15 +19,17 @@
 </template>
 
 <script>
-import { computed, watch, onMounted } from 'vue'
+import { computed, watch, onMounted, onBeforeMount, onErrorCaptured, ref } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 export default {
   name: 'App',
   setup () {
+    const error = ref(null)
     const store = useStore()
     const router = useRouter()
+    const route = useRoute()
 
     const authenticated = computed(() => {
       return store.state.user.authenticated
@@ -50,10 +60,31 @@ export default {
       }
     })
 
+    const errorHandler = (e) => {
+      if (e && e.response && e.response.status === 403) {
+        router.push({
+          name: 'SignIn',
+          query: { redirect: route.fullPath }
+        })
+        store.commit('user/changeToken', null)
+      } else {
+        error.value = e
+      }
+    }
+
+    onBeforeMount(() => {
+      window.onunhandledrejection = ({ reason }) => {
+        errorHandler(reason)
+      }
+    })
+    onErrorCaptured(errorHandler)
+
     const devMode = computed(() => {
       return process.env.NODE_ENV === 'development'
     })
+
     return {
+      error,
       devMode,
       authenticated
     }
@@ -62,6 +93,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.navbar ~ .alert {
+  margin-top: 3em;
+}
+
+.navbar ~ .container-fluid {
+  padding-top: 4em;
+}
+
+.navbar ~ .alert ~ .container-fluid {
+  padding-top: 8em;
+}
 
 .dev-screen-size {
   position: fixed;
