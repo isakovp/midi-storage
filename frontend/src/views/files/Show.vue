@@ -51,7 +51,6 @@ export default {
 
     const getFile = async function () {
       try {
-        console.log(window.test.test)
         const response = await FilesApi.get(fileId.value)
         file.value = response.data
       } catch (e) {
