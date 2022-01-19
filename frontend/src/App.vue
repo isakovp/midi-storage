@@ -1,30 +1,76 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <router-view></router-view>
+  <div class="dev-screen-size" v-if="devMode">
+    <div class="d-block d-sm-none">Screen: XS</div>
+    <div class="d-none d-sm-block d-md-none">Screen: SM</div>
+    <div class="d-none d-md-block d-lg-none">Screen: MD</div>
+    <div class="d-none d-lg-block d-xl-none">Screen: LG</div>
+    <div class="d-none d-xl-block d-xxl-none">Screen: XL</div>
+    <div class="d-none d-xxl-block">Screen: XXL</div>
   </div>
-  <router-view/>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import { computed, watch, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 
-#nav {
-  padding: 30px;
+export default {
+  name: 'App',
+  setup () {
+    const store = useStore()
+    const router = useRouter()
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+    const authenticated = computed(() => {
+      return store.state.user.authenticated
+    })
 
-    &.router-link-exact-active {
-      color: #42b983;
+    const token = computed(() => {
+      return store.state.user.token
+    })
+
+    const updateMe = () => {
+      store.dispatch('user/updateMe')
+    }
+
+    watch([authenticated, token], () => {
+      if (store.state.user.authenticated && store.state.user.token) {
+        updateMe()
+      } else {
+        store.commit('user/changeToken', null)
+        router.push({
+          name: 'SignIn'
+        })
+      }
+    })
+
+    onMounted(() => {
+      if (store.state.user.authenticated) {
+        updateMe()
+      }
+    })
+
+    const devMode = computed(() => {
+      return process.env.NODE_ENV === 'development'
+    })
+    return {
+      devMode,
+      authenticated
     }
   }
 }
+</script>
+
+<style lang="scss" scoped>
+
+.dev-screen-size {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  background-color: #ff1e60;
+  border-radius: 6px;
+  padding: 10px;
+  opacity: 0.7;
+}
+
 </style>
