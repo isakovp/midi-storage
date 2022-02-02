@@ -1,5 +1,10 @@
 <template>
   <div class="row">
+    <div class="col">
+      <div id="boo"></div>
+    </div>
+  </div>
+  <div class="row">
     <div class="col" v-if="!file">
       <h1>File not found</h1>
     </div>
@@ -20,29 +25,32 @@
     </div>
   </div>
   <div class="row justify-content-center">
-    <div class="col-md-10 col-11" v-if="file">
+    <div class="col-md-10 col-11">
       <midi-player
         ref="player"
-        :src="file.url"
-        sound-font
-        :visualizer="'#player-' + file.id">
+        sound-font>
       </midi-player>
-      <midi-visualizer type="staff" :id="'player-' + file.id" :src="file.url"></midi-visualizer>
+      <midi-visualizer
+        ref="visualizer"
+        type="staff">
+      </midi-visualizer>
     </div>
   </div>
 </template>
 
 <script>
 
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import FilesApi from '@/api/FilesApi'
+import Vex from 'vexflow'
 
 export default {
   name: 'Show',
   setup () {
-    const file = ref({})
+    const file = ref(null)
     const player = ref(null)
+    const visualizer = ref(null)
     const panel = ref(null)
     const route = useRoute()
     const fileId = computed(() => {
@@ -52,7 +60,18 @@ export default {
     const getFile = async function () {
       try {
         const response = await FilesApi.get(fileId.value)
+        player.value.src = response.data.url
+        player.value.addVisualizer(visualizer.value)
+        visualizer.value.src = response.data.url
         file.value = response.data
+        visualizer.value.config = {
+          noteHeight: 15,
+          pixelsPerTimeStep: 150,
+          minPitch: 1300,
+          noteRGB: '44,119,246,1',
+          activeNoteRGB: '203,56,55,1',
+          scrollType: 1
+        }
       } catch (e) {
         if (e.response && e.response.status === 404) {
           file.value = null
@@ -68,17 +87,46 @@ export default {
 
     getFile()
 
+    onMounted(() => {
+      const vf = new Vex.Flow.Factory({
+        renderer: {
+          elementId: 'boo',
+          width: 500,
+          height: 500
+        }
+      })
+
+      const score = vf.EasyScore()
+      const system = vf.System()
+
+      // system.addStave({
+      //   voices: [
+      //     score.voice(score.notes('C#5/q, B4, A4, G#4', { stem: 'up' })),
+      //     score.voice(score.notes('C#4/h, C#4', { stem: 'down' }))
+      //   ]
+      // }).addClef('treble').addTimeSignature('4/4')
+
+      system.addStave({
+        voices: [
+          score.voice(score.notes('C#3/2, D4', { clef: 'bass', stem: 'up' })),
+          score.voice(score.notes('C#4/2, D3', { clef: 'bass', stem: 'up' }))
+        ]
+      }).addClef('bass').addTimeSignature('4/4')
+
+      // system.addConnector()
+
+      vf.draw()
+    })
+
     return {
       file,
       panel,
-      player
+      player,
+      visualizer
     }
   }
 }
 </script>
 
 <style scoped>
-.header:after {
-  content: "123"
-}
 </style>

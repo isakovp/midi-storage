@@ -22,6 +22,8 @@
 import { computed, watch, onMounted, onBeforeMount, onErrorCaptured, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
+import AuthenticationApi from '@/api/AuthenticationApi'
+import Promise from 'promise-polyfill'
 
 export default {
   name: 'App',
@@ -39,8 +41,9 @@ export default {
       return store.state.user.token
     })
 
-    const updateMe = () => {
-      store.dispatch('user/updateMe')
+    const updateMe = async () => {
+      const { data } = await AuthenticationApi.me()
+      store.commit('user/setMe', data)
     }
 
     watch([authenticated, token], () => {
@@ -71,6 +74,8 @@ export default {
         error.value = e
       }
     }
+
+    Promise._unhandledRejectionFn = errorHandler
 
     onBeforeMount(() => {
       window.onunhandledrejection = ({ reason }) => {
@@ -109,7 +114,7 @@ export default {
 .dev-screen-size {
   position: fixed;
   bottom: 0;
-  right: 0;
+  left: 0;
   background-color: #ff1e60;
   border-radius: 6px;
   padding: 10px;

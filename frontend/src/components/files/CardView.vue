@@ -2,14 +2,14 @@
   <div class="row row-cols-1 row-cols-md-3 g-4" v-if="topFiles" ref="scrollComponent">
     <div class="col" v-for="file in topFiles.files" :key="file.id">
       <div class="card h-100">
+        <div class="card-header">
+          <router-link :to="{name: 'File', params: { id: file.id }}">{{ file.name }}</router-link>
+        </div>
         <div class="card-body">
-          <h5 class="card-title">
-            <router-link :to="{name: 'File', params: { id: file.id }}">{{ file.name }}</router-link>
-          </h5>
-          <p class="card-text">{{ file.description }}</p>
+          <pre class="card-text">{{ file.description }}</pre>
         </div>
         <div class="card-footer">
-          <small class="text-muted">Uploaded {{ $timeAgo.format(new Date(file.created_at)) }}</small>
+          <small class="text-muted">Uploaded {{ $timeAgo.format(new Date(file.createdAt)) }}</small>
           <small class="text-muted float-end">
             <i class="bi-eye"></i>
             {{ file.views.toLocaleString() }}
@@ -75,5 +75,7 @@ export default {
 </script>
 
 <style scoped>
-
+  .card-text {
+    white-space: pre-wrap;
+  }
 </style>

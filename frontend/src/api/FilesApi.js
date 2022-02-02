@@ -2,10 +2,25 @@ import Api from '@/api/Api'
 
 const FilesApi = {
   getTopFiles (page, limit, filter = 'top') {
-    return Api.get('/files', { params: { page, limit, filter } })
+    return Api.get('/api/files', { params: { page, limit, filter } })
   },
   get (id) {
-    return Api.get(`/files/${id}`)
+    return Api.get(`/api/files/${id}`)
+  },
+  create (name, description, io, listener) {
+    const data = new FormData()
+    data.append('name', name)
+    data.append('description', description)
+    data.append('file', io)
+
+    return Api.post('/api/files',
+      data,
+      {
+        onUploadProgress: listener,
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
   }
 }
 

@@ -24,5 +24,4 @@ app.use({
     app.config.globalProperties.$timeAgo = timeAgo
   }
 })
-
 app.use(store).use(router).mount('#app')

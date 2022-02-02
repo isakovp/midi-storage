@@ -1,17 +1,20 @@
 <template>
   <FilesCardView v-if="topFiles" :loading="topFilesLoading" :top-files="topFiles" @loadmore="loadMore"/>
+  <NewFile/>
 </template>
 
 <script>
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import FilesCardView from '@/components/files/CardView'
+import NewFile from '@/components/files/New'
 import FilesApi from '@/api/FilesApi'
 
 export default {
   name: 'Home',
   components: {
-    FilesCardView
+    FilesCardView,
+    NewFile
   },
   setup () {
     const router = useRouter()

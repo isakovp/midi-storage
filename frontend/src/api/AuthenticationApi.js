@@ -2,13 +2,13 @@ import Api from '@/api/Api'
 
 const FilesApi = {
   signIn (username, password) {
-    return Api.post('/authenticate', { params: { username, password } })
+    return Api.post('/api/authenticate', { params: { username, password } })
   },
   me () {
-    return Api.get('/me')
+    return Api.get('/api/users/me')
   },
   signOut () {
-    return Api.delete('/authenticate')
+    return Api.delete('/api/authenticate')
   }
 }
 

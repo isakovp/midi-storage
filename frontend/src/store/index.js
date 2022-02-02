@@ -1,5 +1,4 @@
 import { createStore } from 'vuex'
-import AuthenticationApi from '@/api/AuthenticationApi'
 
 const token = localStorage.getItem('token')
 const authenticated = !!token
@@ -23,12 +22,6 @@ const user = {
     },
     setMe (state, me) {
       state.me = me
-    }
-  },
-  actions: {
-    async updateMe (context) {
-      const { data } = await AuthenticationApi.me()
-      context.commit('setMe', data)
     }
   }
 }
