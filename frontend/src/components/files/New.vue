@@ -1,7 +1,7 @@
 <template>
-  <button type="button" class="btn btn-primary btn-float btn-lg shadow" data-bs-toggle="modal"
+  <button type="button" class="btn btn-danger" data-bs-toggle="modal"
           data-bs-target="#newFileModal">
-    <i class="bi-plus-lg"></i>
+    Upload file
   </button>
 
   <!-- Modal -->
@@ -86,7 +86,7 @@ export default {
       progress.value = 0
       try {
         const { data } = await FilesApi.create(fileName.value, fileDescription.value, fileIO.value, (event) => {
-          progress.value = Math.round(event.loaded * 100 / event.total)
+          progress.value = Math.round(event.loaded * 100 / event.total * 0.98)
         })
         progress.value = 100
         handleClose()
@@ -134,14 +134,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.btn-float {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  border-radius: 50%;
-  width: 55px;
-  height: 55px;
-}
-</style>

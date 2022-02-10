@@ -19,13 +19,13 @@
                      :checked="viewMode === 'card'" @change="toggleCardView">
               <label class="btn btn-sm btn-outline-primary" for="btnCards"><i class="bi bi-grid"></i></label>
             </div>
+            <NewFile/>
           </div>
         </div>
         <div class="flex-grow-1 ms-md-3 mt-3 mt-md-0">
           <h1 v-if="query">Search result for "{{ query.length > 20 ? `${query.substring(0, 20)}...` : query }}"</h1>
           <FilesCardsView v-if="topFiles && viewMode === 'card'" :loading="topFilesLoading" :top-files="topFiles"/>
           <FilesListView v-if="topFiles && viewMode === 'list'" :loading="topFilesLoading" :top-files="topFiles"/>
-          <NewFile/>
         </div>
       </div>
     </div>
