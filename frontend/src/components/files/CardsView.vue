@@ -1,5 +1,5 @@
 <template>
-  <div class="row row-cols-1 row-cols-md-3 g-4" v-if="topFiles" ref="scrollComponent">
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4" v-if="topFiles">
     <div class="col" v-for="file in topFiles.files" :key="file.id">
       <div class="card h-100">
         <div class="card-header">
@@ -9,7 +9,7 @@
           <pre class="card-text">{{ file.description }}</pre>
         </div>
         <div class="card-footer">
-          <small class="text-muted">Uploaded {{ $timeAgo.format(new Date(file.createdAt)) }}</small>
+          <small class="text-muted">Uploaded {{ $timeAgo.format(new Date(file.createdAt)) }} by {{file.createdBy.name}}</small>
           <small class="text-muted float-end">
             <i class="bi-eye"></i>
             {{ file.views.toLocaleString() }}
@@ -34,10 +34,8 @@
 </template>
 
 <script>
-import { ref, onMounted, onUnmounted } from 'vue'
-
 export default {
-  name: 'CardView',
+  name: 'CardsView',
   props: {
     topFiles: {
       type: Object,
@@ -46,29 +44,6 @@ export default {
     loading: {
       type: Boolean,
       required: true
-    }
-  },
-  emits: ['loadmore', 'select'],
-  setup (props, { emit }) {
-    const scrollComponent = ref(null)
-
-    const handleScroll = () => {
-      if (scrollComponent.value.getBoundingClientRect().bottom <= window.innerHeight) {
-        emit('loadmore')
-      }
-    }
-
-    onMounted(() => {
-      window.addEventListener('scroll', handleScroll)
-    })
-
-    onUnmounted(() => {
-      window.removeEventListener('scroll', handleScroll)
-    })
-
-    return {
-      scrollComponent,
-      handleScroll
     }
   }
 }

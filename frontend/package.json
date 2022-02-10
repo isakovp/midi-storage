@@ -16,7 +16,6 @@
     "html-midi-player": "^1.4.0",
     "javascript-time-ago": "^2.3.11",
     "promise-polyfill": "^8.2.1",
-    "vexflow": "^3.0.9",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"

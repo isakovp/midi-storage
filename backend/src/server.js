@@ -1,9 +1,11 @@
 const express = require('express')
 const cors = require('cors')
+const i18n = require('./localization')()
 const config = require('./config/config')
 const userRoutes = require('./routes/users')
 const sessionRoutes = require('./routes/session')
 const filesRoutes = require('./routes/files')
+
 
 const app = express()
 
@@ -21,6 +23,7 @@ const corsOpts = {
   ]
 }
 
+app.use(i18n.init)
 app.use(cors(corsOpts))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -35,7 +38,8 @@ app.route('*').get((req, res) => {
     .send(null)
 })
 
-app.use((err, req, res, next) => {
+app.use((err, req, res, _) => {
+  console.log('ERROR', err)
   return res
     .status(500)
     .send({ error: err.toString(), status: 500 })

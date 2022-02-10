@@ -1,0 +1,6 @@
+{
+	"errors.validation.email_uniq": "this email is already taken",
+	"errors.validation.field_email": "must be email address",
+	"errors.validation.field_required": "field is required",
+	"errors.validation.field_max_len": "field value length should be equals or less then %s"
+}

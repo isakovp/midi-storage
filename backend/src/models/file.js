@@ -4,6 +4,8 @@ const {
 } = require('sequelize')
 const config = require('../config/config')
 const sequelize = require('./db')
+const User = require('./user')
+const { validateString } = require('./validator')
 
 class File extends Model {
   url () {
@@ -16,48 +18,53 @@ File.init({
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      notEmpty: true,
-      len: [0, 100]
+      ...validateString(true, 255)
     }
   },
   description: {
     type: DataTypes.TEXT,
     allowNull: false,
     validate: {
-      notEmpty: true,
-      len: [0, 1000]
+      ...validateString(true, null)
     }
   },
   views: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    validate: {
-      notEmpty: true
-    },
     defaultValue: 0
   },
   favorites: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    validate: {
-      notEmpty: true
-    },
     defaultValue: 0
   },
   filename: {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      notEmpty: true,
-      len: [0, 100]
+      ...validateString(true, 255)
     }
   }
-
 }, {
   sequelize
 })
 
+File.createdBy = File.belongsTo(User, {
+  as: 'createdBy',
+  foreignKey: 'createdById'
+})
+User.files = User.hasMany(File, {
+  as: 'files',
+  foreignKey: 'createdById'
+})
+
 module.exports = File
 module.exports.serializerScheme = {
-  include: ['@all', 'url']
+  include: ['@all', 'url', 'createdBy'],
+  exclude: ['createdById'],
+  assoc: {
+    createdBy: {
+      include: ['id', 'name']
+    }
+  }
 }

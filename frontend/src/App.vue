@@ -1,10 +1,12 @@
 <template>
   <router-view name="navbar"></router-view>
-  <div class="alert alert-danger fixed-top alert-dismissible fade show" v-if="error" role="alert">
-    <i class="bi-exclamation-triangle-fill"></i>
-    Oops. Something went wrong
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @click="error = null"></button>
-  </div>
+  <transition name="fade">
+    <div class="alert alert-danger fixed-top alert-dismissible" v-if="error" role="alert">
+      <i class="bi-exclamation-triangle-fill"></i>
+      Oops. Something went wrong
+      <button type="button" class="btn-close" aria-label="Close" @click="error = null"></button>
+    </div>
+  </transition>
   <div class="container-fluid">
     <router-view></router-view>
   </div>
@@ -19,7 +21,7 @@
 </template>
 
 <script>
-import { computed, watch, onMounted, onBeforeMount, onErrorCaptured, ref } from 'vue'
+import { computed, watch, onMounted, onUnmounted, onBeforeMount, onErrorCaptured, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
 import AuthenticationApi from '@/api/AuthenticationApi'
@@ -32,6 +34,7 @@ export default {
     const store = useStore()
     const router = useRouter()
     const route = useRoute()
+    let alertTimer = null
 
     const authenticated = computed(() => {
       return store.state.user.authenticated
@@ -57,9 +60,31 @@ export default {
       }
     })
 
+    watch(error, () => {
+      if (error.value) {
+        if (alertTimer) {
+          clearTimeout(alertTimer)
+          alertTimer = null
+        }
+        alertTimer = setTimeout(() => {
+          error.value = null
+        }, 5000)
+      } else if (alertTimer) {
+        clearTimeout(alertTimer)
+        alertTimer = null
+      }
+    })
+
     onMounted(() => {
       if (store.state.user.authenticated) {
         updateMe()
+      }
+    })
+
+    onUnmounted(() => {
+      if (alertTimer) {
+        clearTimeout(alertTimer)
+        alertTimer = null
       }
     })
 
@@ -101,6 +126,7 @@ export default {
 
 .navbar ~ .alert {
   margin-top: 3em;
+  opacity: 1;
 }
 
 .navbar ~ .container-fluid {
@@ -119,6 +145,34 @@ export default {
   border-radius: 6px;
   padding: 10px;
   opacity: 0.7;
+}
+
+.fade-enter-active {
+  animation: fade-in .3s;
+}
+.fade-leave-active {
+  animation: fade-out .3s
+}
+
+@keyframes fade-in {
+  0% {
+    margin-top: -3em;
+  }
+  70% {
+    margin-top: 1em;
+  }
+  100% {
+    margin-top: 0em;
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    margin-top: 0em;
+  }
+  100% {
+    margin-top: -3em;
+  }
 }
 
 </style>

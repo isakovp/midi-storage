@@ -23,7 +23,8 @@ router.get('/', User.verifyToken, async (req, res) => {
 
   const result = await File.findAll({
     offset: page * limit,
-    limit
+    limit,
+    include: 'createdBy'
   })
   const count = await File.count()
   const nasNext = (page * limit) + limit < count
@@ -64,7 +65,12 @@ router.post('/', User.verifyToken, upload.single('file'), async (req, res) => {
       const newFile = await File.create({
         name: body.name,
         description: body.description,
-        filename: req.file ? req.file.filename : null
+        filename: req.file ? req.file.filename : null,
+        createdById: req.user.id
+      }, {
+        include: {
+          association: File.createdBy
+        }
       })
       const serializer = new Serializer(File, File.serializerScheme)
       return res
@@ -87,10 +93,11 @@ router.post('/', User.verifyToken, upload.single('file'), async (req, res) => {
 })
 
 router.get('/:id', User.verifyToken, async (req, res) => {
-  const file = await File.findByPk(req.params.id)
+  const file = await File.findByPk(req.params.id, {
+    include: 'createdBy'
+  })
   if (file) {
-    file.views += 1
-    await file.save()
+    // await file.increment('views', { by: 1 });
     const serializer = new Serializer(File, File.serializerScheme)
     return res
       .status(200)

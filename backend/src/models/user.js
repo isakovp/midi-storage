@@ -1,7 +1,11 @@
-const { DataTypes, Model } = require('sequelize')
+const {
+  DataTypes,
+  Model
+} = require('sequelize')
 const sequelize = require('./db')
 const jwt = require('jsonwebtoken')
 const config = require('../config/config')
+const { validateString } = require('./validator')
 
 class User extends Model {
   static verifyToken (req, res, next) {
@@ -22,7 +26,7 @@ class User extends Model {
       }
 
       const user = await User.findByPk(decoded.id)
-      if (!user || user.email !== decoded.email) {
+      if (!user || user.email !== decoded.email || user.createdAt.toLocaleString() !== decoded.createdAt) {
         return res.status(403).send({
           auth: false,
           message: 'Invalid token.'
@@ -38,28 +42,28 @@ User.init({
   email: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
+    unique: {
+      msg: global.i18n.__('errors.validation.email_uniq')
+    },
     validate: {
+      ...validateString(true, 255),
       isEmail: {
-        msg: 'Must be email address'
-      },
-      notEmpty: true,
-      len: [0, 100]
+        msg: global.i18n.__('errors.validation.field_email')
+      }
     }
   },
   name: {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      notEmpty: true,
-      len: [0, 100]
+      ...validateString(true, 255)
     }
   },
   password: {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      notEmpty: true
+      ...validateString(true, 255)
     }
   }
 
