@@ -1,8 +1,10 @@
 const { Sequelize } = require('sequelize')
 const { databaseURL } = require('../config/config')
 
-const logger = (sql) => {
+const logger = (sql, info) => {
+  console.groupCollapsed("SQL " + info.type)
   console.log(sql)
+  console.groupEnd()
 }
 
 const sequelize = new Sequelize(databaseURL, {

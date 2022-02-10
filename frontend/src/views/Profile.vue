@@ -3,7 +3,10 @@
 
 <script>
 export default {
-  name: 'Profile'
+  name: 'Profile',
+  setup () {
+    document.title = 'Profile - MIDI Storage'
+  }
 }
 </script>
 

@@ -6,6 +6,12 @@
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         </ul>
         <div class="d-flex">
+          <div class="input-group me-3">
+            <input type="search" class="form-control" v-model="query" @keydown.enter="handleSearch">
+            <button class="btn btn-primary" type="button" @click="handleSearch" :disabled="!query">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
           <div class="btn-group" v-if="authenticated">
             <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton1"
                     data-bs-toggle="dropdown" aria-expanded="false">
@@ -30,13 +36,17 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter, useRoute } from 'vue-router'
 
 export default {
   name: 'NavBar',
   setup () {
     const store = useStore()
+    const query = ref(null)
+    const router = useRouter()
+    const route = useRoute()
 
     const name = computed(() => {
       return store.state.user.me ? store.state.user.me.name : ''
@@ -52,10 +62,23 @@ export default {
       store.commit('user/changeToken', null)
     }
 
+    const handleSearch = () => {
+      if (query.value) {
+        router.push({
+          name: 'Home',
+          params: route.name === 'Home' ? route.params : { filter: 'newest' },
+          query: { q: (query.value).trim() }
+        })
+        query.value = null
+      }
+    }
+
     return {
       name,
       email,
       authenticated,
+      query,
+      handleSearch,
       signOut
     }
   }

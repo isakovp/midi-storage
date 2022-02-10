@@ -33,6 +33,13 @@ const routes = [
     }
   },
   {
+    path: '/',
+    redirect: {
+      name: 'Home',
+      params: { filter: 'newest' }
+    }
+  },
+  {
     path: '/files/:id',
     name: 'File',
     components: {
@@ -40,9 +47,6 @@ const routes = [
       navbar: NavBar
     },
     meta: {
-      breadcrumbs: [
-        { name: 'Home', label: 'Home' }
-      ],
       requiresAuth: true
     }
   },
@@ -54,9 +58,6 @@ const routes = [
       navbar: NavBar
     },
     meta: {
-      breadcrumbs: [
-        { name: 'Home', label: 'Home' }
-      ],
       requiresAuth: true
     }
   }

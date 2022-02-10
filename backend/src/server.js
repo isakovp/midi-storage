@@ -23,6 +23,12 @@ const corsOpts = {
   ]
 }
 
+app.use((req, res, next) => {
+  console.groupCollapsed(req.method.toLocaleUpperCase() + ' ' + req.url)
+  next()
+  console.log(res.statusCode)
+  console.groupEnd()
+})
 app.use(i18n.init)
 app.use(cors(corsOpts))
 app.use(express.json())
@@ -32,7 +38,9 @@ app.use('/api', sessionRoutes)
 app.use('/api/files', filesRoutes)
 app.use('/api/users', userRoutes)
 
+
 app.route('*').get((req, res) => {
+  console.log('ERROR 404', req.url)
   return res
     .status(404)
     .send(null)

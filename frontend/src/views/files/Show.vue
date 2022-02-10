@@ -67,6 +67,7 @@ export default {
         loading.value = true
         const response = await FilesApi.get(fileId.value)
         file.value = response.data
+        document.title = `${file.value.name} - MIDI Storage`
         if (player.value) {
           player.value.src = response.data.url
           player.value.addVisualizer(visualizer.value)
@@ -97,12 +98,17 @@ export default {
 
     getFile()
 
+    const getTitle = () => {
+      return file.value.name
+    }
+
     return {
       file,
       panel,
       player,
       visualizer,
-      loading
+      loading,
+      getTitle
     }
   }
 }

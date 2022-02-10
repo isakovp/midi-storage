@@ -4,7 +4,7 @@ const router = express.Router()
 const File = require('../models/file')
 const User = require('../models/user')
 const Serializer = require('sequelize-to-json')
-const { ValidationError } = require('sequelize')
+const { Op, ValidationError } = require('sequelize')
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -21,12 +21,19 @@ router.get('/', User.verifyToken, async (req, res) => {
   const page = Math.abs(req.query.page || 0)
   const limit = Math.abs(req.query.limit || 10)
 
-  const result = await File.findAll({
+  const query = req.query.query
+  const where = {}
+  if (query) {
+    where.name = {
+      [Op.iLike]: `%${query.toLowerCase()}%`
+    }
+  }
+  const { count, rows } = await File.findAndCountAll({
+    where,
     offset: page * limit,
     limit,
     include: 'createdBy'
   })
-  const count = await File.count()
   const nasNext = (page * limit) + limit < count
   const filter = req.query.filter
   let filterFunc
@@ -47,7 +54,7 @@ router.get('/', User.verifyToken, async (req, res) => {
   return res
     .status(200)
     .send({
-      files: Serializer.serializeMany(result.sort(filterFunc), File, File.serializerScheme),
+      files: Serializer.serializeMany(rows.sort(filterFunc), File, File.serializerScheme),
       meta: {
         count: count,
         page,

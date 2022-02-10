@@ -1,8 +1,8 @@
 import Api from '@/api/Api'
 
 const FilesApi = {
-  getTopFiles (page, limit, filter = 'top') {
-    return Api.get('/api/files', { params: { page, limit, filter } })
+  getTopFiles (page, limit, filter = 'top', query = null) {
+    return Api.get('/api/files', { params: { page, limit, filter, query } })
   },
   get (id) {
     return Api.get(`/api/files/${id}`)

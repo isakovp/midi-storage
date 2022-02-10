@@ -5,28 +5,24 @@
         <div class="sidebar">
           <div class="d-grid gap-2">
             <div class="btn-group-vertical">
-              <router-link :to="{name: 'Home', params: {filter: 'newest'}}" class="btn btn-outline-primary"
+              <router-link v-for="(label, key) in navLabels" :key="key"
+                           :to="{name: 'Home', params: {filter: key}}" class="btn btn-outline-primary"
                            active-class="active" exact-active-class=""
-                           aria-current="page">Newest files
-              </router-link>
-              <router-link :to="{name: 'Home', params: {filter: 'top'}}" class="btn btn-outline-primary"
-                           active-class="active" exact-active-class=""
-                           aria-current="page">Most viewed
-              </router-link>
-              <router-link :to="{name: 'Home', params: {filter: 'favs'}}" class="btn btn-outline-primary"
-                           active-class="active" exact-active-class=""
-                           aria-current="page">Most favorited
+                           aria-current="page">{{label}}
               </router-link>
             </div>
             <div class="btn-group" role="group">
-              <input type="radio" class="btn-check" name="options" id="btnList" autocomplete="off" :checked="viewMode === 'list'" @change="toggleCardView">
+              <input type="radio" class="btn-check" name="options" id="btnList" autocomplete="off"
+                     :checked="viewMode === 'list'" @change="toggleCardView">
               <label class="btn btn-sm btn-outline-primary" for="btnList"><i class="bi bi-card-list"></i></label>
-              <input type="radio" class="btn-check" name="btn" id="btnCards" autocomplete="off" :checked="viewMode === 'card'" @change="toggleCardView">
+              <input type="radio" class="btn-check" name="btn" id="btnCards" autocomplete="off"
+                     :checked="viewMode === 'card'" @change="toggleCardView">
               <label class="btn btn-sm btn-outline-primary" for="btnCards"><i class="bi bi-grid"></i></label>
             </div>
           </div>
         </div>
         <div class="flex-grow-1 ms-md-3 mt-3 mt-md-0">
+          <h1 v-if="query">Search result for "{{ query.length > 20 ? `${query.substring(0, 20)}...` : query }}"</h1>
           <FilesCardsView v-if="topFiles && viewMode === 'card'" :loading="topFilesLoading" :top-files="topFiles"/>
           <FilesListView v-if="topFiles && viewMode === 'list'" :loading="topFilesLoading" :top-files="topFiles"/>
           <NewFile/>
@@ -38,7 +34,7 @@
 
 <script>
 import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
 import FilesCardsView from '@/components/files/CardsView'
 import FilesListView from '@/components/files/ListView'
 import NewFile from '@/components/files/New'
@@ -53,18 +49,30 @@ export default {
   },
   setup () {
     const viewMode = ref(localStorage.getItem('viewMode') || 'list')
-    const router = useRouter()
     const route = useRoute()
     const page = ref(0)
     const topFiles = ref({})
     const topFilesLoading = ref(false)
+    const navLabels = ref({
+      newest: 'Newest files',
+      top: 'Most viewed',
+      favs: 'Most favorited'
+    })
     const filter = computed(() => {
       return route.params.filter
     })
+    const query = computed(() => {
+      return route.query.q
+    })
 
     const appendFiles = async (p) => {
+      if (query.value) {
+        document.title = `Search result for "${query.value.length > 20 ? query.value.substring(0, 20) + '...' : query.value}" - MIDI Storage`
+      } else {
+        document.title = `${navLabels.value[filter.value]} - MIDI Storage`
+      }
       topFilesLoading.value = true
-      const response = await FilesApi.getTopFiles(p, 60, filter.value)
+      const response = await FilesApi.getTopFiles(p, 60, filter.value, query.value)
       const data = response.data
       if (data.files) {
         topFiles.value = {
@@ -84,13 +92,6 @@ export default {
     onMounted(() => {
       appendFiles(0)
     })
-
-    if (!filter.value) {
-      router.push({
-        name: 'Home',
-        params: { filter: 'newest' }
-      })
-    }
 
     const handleScroll = () => {
       const bottomOfWindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight
@@ -122,11 +123,13 @@ export default {
     }
 
     return {
+      navLabels,
       viewMode,
       page,
       topFiles,
       topFilesLoading,
       filter,
+      query,
       toggleCardView
     }
   }
