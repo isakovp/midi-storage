@@ -77,7 +77,8 @@ export default {
     const handleFileChange = () => {
       fileIO.value = upload.value.files[0]
       if (!fileName.value) {
-        fileName.value = upload.value.files[0].name
+        const name = upload.value.files[0].name
+        fileName.value = name.substring(0, name.lastIndexOf('.'))
       }
     }
 

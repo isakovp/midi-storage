@@ -6,7 +6,14 @@
         <div class="fw-bold">
           <router-link :to="{name: 'File', params: { id: file.id }}">{{ file.name }}</router-link>
         </div>
-        {{ file.description }}
+        <span class="badge rounded-pill bg-light text-dark" title="views">
+          <i class="bi-eye"></i>
+          {{ file.views.toLocaleString() }}
+        </span>
+        <span class="badge rounded-pill bg-light text-dark ms-1" title="bookmarks">
+          <i class="bi-bookmark"></i>
+          {{ file.favorites.toLocaleString() }}
+        </span>
       </div>
       <div class="text-end col-3">
         <small class="d-block">
@@ -15,14 +22,6 @@
         <small class="d-block">
           by {{ file.createdBy.name }}
         </small>
-        <span class="badge bg-primary rounded-pill" title="views">
-          <i class="bi-eye"></i>
-          {{ file.views.toLocaleString() }}
-        </span>
-        <span class="badge bg-primary rounded-pill ms-1" title="bookmarks">
-          <i class="bi-bookmark"></i>
-          {{ file.favorites.toLocaleString() }}
-        </span>
       </div>
     </li>
   </ol>

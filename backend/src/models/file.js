@@ -1,13 +1,11 @@
-const {
-  DataTypes,
-  Model
-} = require('sequelize')
+const { DataTypes } = require('sequelize')
+const BaseModel = require('./baseModel')
 const config = require('../config/config')
 const sequelize = require('./db')
 const User = require('./user')
 const { validateString } = require('./validator')
 
-class File extends Model {
+class File extends BaseModel {
   url () {
     return [config.serverUrl, config.uploadDir, this.filename].join('')
   }
@@ -49,13 +47,17 @@ File.init({
   sequelize
 })
 
-File.createdBy = File.belongsTo(User, {
-  as: 'createdBy',
-  foreignKey: 'createdById'
-})
 User.files = User.hasMany(File, {
   as: 'files',
-  foreignKey: 'createdById'
+  constraints: false,
+  foreignKey: {
+    name: 'createdById',
+    allowNull: false
+  }
+})
+File.belongsTo(User, {
+  as: 'createdBy',
+  constraints: false
 })
 
 module.exports = File

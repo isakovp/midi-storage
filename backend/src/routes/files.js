@@ -104,7 +104,7 @@ router.get('/:id', User.verifyToken, async (req, res) => {
     include: 'createdBy'
   })
   if (file) {
-    // await file.increment('views', { by: 1 });
+    await file.increment('views', { by: 1 });
     const serializer = new Serializer(File, File.serializerScheme)
     return res
       .status(200)

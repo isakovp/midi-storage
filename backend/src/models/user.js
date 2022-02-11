@@ -1,13 +1,11 @@
-const {
-  DataTypes,
-  Model
-} = require('sequelize')
+const { DataTypes } = require('sequelize')
+const BaseModel = require('./baseModel')
 const sequelize = require('./db')
 const jwt = require('jsonwebtoken')
 const config = require('../config/config')
 const { validateString } = require('./validator')
 
-class User extends Model {
+class User extends BaseModel {
   static verifyToken (req, res, next) {
     const token = (req.headers.authorization || '').replace('Bearer ', '')
     if (!token) {
