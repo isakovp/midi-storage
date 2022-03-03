@@ -6,17 +6,17 @@
           <div class="d-grid gap-2">
             <div class="btn-group-vertical">
               <router-link v-for="(label, key) in navLabels" :key="key"
-                           :to="{name: 'Home', params: {filter: key}}" class="btn btn-outline-primary"
-                           active-class="active" exact-active-class=""
-                           aria-current="page">{{label}}
+                           :to="{name: 'Home', params: {filter: key}}" active-class="active"
+                           aria-current="page" class="btn btn-outline-primary"
+                           exact-active-class="">{{label}}
               </router-link>
             </div>
             <div class="btn-group" role="group">
-              <input type="radio" class="btn-check" name="options" id="btnList" autocomplete="off"
-                     :checked="viewMode === 'list'" @change="toggleCardView">
+              <input id="btnList" :checked="viewMode === 'list'" autocomplete="off" class="btn-check" name="options"
+                     type="radio" @change="toggleCardView">
               <label class="btn btn-sm btn-outline-primary" for="btnList"><i class="bi bi-card-list"></i></label>
-              <input type="radio" class="btn-check" name="btn" id="btnCards" autocomplete="off"
-                     :checked="viewMode === 'card'" @change="toggleCardView">
+              <input id="btnCards" :checked="viewMode === 'card'" autocomplete="off" class="btn-check" name="btn"
+                     type="radio" @change="toggleCardView">
               <label class="btn btn-sm btn-outline-primary" for="btnCards"><i class="bi bi-grid"></i></label>
             </div>
             <NewFile/>
@@ -33,12 +33,12 @@
 </template>
 
 <script>
-import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import FilesApi from '@/api/FilesApi'
 import FilesCardsView from '@/components/files/CardsView'
 import FilesListView from '@/components/files/ListView'
 import NewFile from '@/components/files/New'
-import FilesApi from '@/api/FilesApi'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
 export default {
   name: 'Home',
@@ -108,9 +108,11 @@ export default {
       window.removeEventListener('scroll', handleScroll)
     })
 
-    watch([filter, route], () => {
-      topFiles.value = {}
-      appendFiles(0)
+    watch([filter], () => {
+      if (filter.value) {
+        topFiles.value = {}
+        appendFiles(0)
+      }
     })
 
     const toggleCardView = () => {

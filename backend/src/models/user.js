@@ -63,6 +63,14 @@ User.init({
     validate: {
       ...validateString(true, 255)
     }
+  },
+  role: {
+    type: DataTypes.ENUM('user', 'admin', 'moderator'),
+    allowNull: false,
+    defaultValue: 'user',
+    validate: {
+      ...validateString(true, 255)
+    }
   }
 
 }, {

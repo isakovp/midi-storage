@@ -1,4 +1,5 @@
 const path = require('path')
+require('dotenv').config()
 // eslint-disable-next-line no-undef
 global.appRoot = path.resolve(__dirname)
 const config = require('./src/config/config')

@@ -2,24 +2,24 @@
     <div class="row justify-content-center mt-5 pt-5">
       <div class="col-xxl-3 col-xl-4 3 col-lg-4 col-md-6 col-12">
         <h1>Sign In</h1>
-        <form @submit.prevent="handleSubmit" class="has-validation" :disabled="true">
+        <form :disabled="true" class="has-validation" @submit.prevent="handleSubmit">
           <div class="mb-3">
-            <label for="inputEmail" class="form-label">Email</label>
-            <input type="email" :class="error ? 'form-control is-invalid' : 'form-control'" id="inputEmail"
-                   v-model="username" :disabled="disabled">
+            <label class="form-label" for="inputEmail">Email</label>
+            <input id="inputEmail" v-model="username" :class="error ? 'form-control is-invalid' : 'form-control'"
+                   :disabled="disabled" type="email">
           </div>
           <div class="mb-3">
-            <label for="inputPassword" class="form-label">Password</label>
+            <label class="form-label" for="inputPassword">Password</label>
             <div class="input-group has-validation">
-              <input type="password" :class="error ? 'form-control is-invalid' : 'form-control'" id="inputPassword"
-                     v-model="password" :disabled="disabled">
+              <input id="inputPassword" v-model="password" :class="error ? 'form-control is-invalid' : 'form-control'"
+                     :disabled="disabled" type="password">
               <div class="invalid-feedback">
                 Invalid username or password
               </div>
             </div>
           </div>
           <div class="d-grid gap-2">
-            <button type="submit" class="btn btn-primary btn-block" :disabled="disabled">Sign In</button>
+            <button :disabled="disabled" class="btn btn-primary btn-block" type="submit">Sign In</button>
             <router-link :to="{name: 'SignUp'}" class="btn btn-link">Sign Up</router-link>
           </div>
         </form>
@@ -28,10 +28,10 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-import { useStore } from 'vuex'
-import { useRoute, useRouter } from 'vue-router'
 import AuthenticationApi from '@/api/AuthenticationApi'
+import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
 export default {
   name: 'SignIn',

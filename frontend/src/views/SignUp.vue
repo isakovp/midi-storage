@@ -2,35 +2,35 @@
     <div class="row justify-content-center mt-5 pt-5">
       <div class="col-xxl-3 col-xl-4 3 col-lg-4 col-md-6 col-12">
         <h1>Sign Up</h1>
-        <form @submit.prevent="handleSubmit" class="has-validation" :disabled="true">
+        <form :disabled="true" class="has-validation" @submit.prevent="handleSubmit">
           <div class="mb-3">
-            <label for="inputEmail" class="form-label">Email</label>
-            <input type="email" :class="errors.email ? 'form-control is-invalid' : 'form-control'" id="inputEmail"
-                   v-model="username" :disabled="disabled" >
-            <div class="invalid-feedback" v-if="errors.email">
+            <label class="form-label" for="inputEmail">Email</label>
+            <input id="inputEmail" v-model="username" :class="errors.email ? 'form-control is-invalid' : 'form-control'"
+                   :disabled="disabled" type="email" >
+            <div v-if="errors.email" class="invalid-feedback">
               {{errors.email.join(', ')}}
             </div>
           </div>
           <div class="mb-3">
-            <label for="inputName" class="form-label">Name</label>
-            <input type="text" :class="errors.name ? 'form-control is-invalid' : 'form-control'" id="inputName"
-                   v-model="name" :disabled="disabled" >
-            <div class="invalid-feedback" v-if="errors.name">
+            <label class="form-label" for="inputName">Name</label>
+            <input id="inputName" v-model="name" :class="errors.name ? 'form-control is-invalid' : 'form-control'"
+                   :disabled="disabled" type="text" >
+            <div v-if="errors.name" class="invalid-feedback">
               {{errors.name.join(', ')}}
             </div>
           </div>
           <div class="mb-3">
-            <label for="inputPassword" class="form-label">Password</label>
+            <label class="form-label" for="inputPassword">Password</label>
             <div class="input-group has-validation">
-              <input type="password" :class="errors.password ? 'form-control is-invalid' : 'form-control'" id="inputPassword"
-                     v-model="password" :disabled="disabled" >
-              <div class="invalid-feedback" v-if="errors.password">
+              <input id="inputPassword" v-model="password" :class="errors.password ? 'form-control is-invalid' : 'form-control'"
+                     :disabled="disabled" type="password" >
+              <div v-if="errors.password" class="invalid-feedback">
                 {{errors.password.join(', ')}}
               </div>
             </div>
           </div>
           <div class="d-grid gap-2">
-            <button type="submit" class="btn btn-primary btn-block" :disabled="disabled">Sign Up</button>
+            <button :disabled="disabled" class="btn btn-primary btn-block" type="submit">Sign Up</button>
             <router-link :to="{name: 'SignIn'}" class="btn btn-link">Sign In</router-link>
           </div>
         </form>
@@ -39,10 +39,10 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-import { useStore } from 'vuex'
-import { useRoute, useRouter } from 'vue-router'
 import AuthenticationApi from '@/api/AuthenticationApi'
+import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
 export default {
   name: 'SignIn',

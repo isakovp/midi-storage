@@ -1,16 +1,16 @@
 <template>
   <router-view name="navbar"></router-view>
   <transition name="fade">
-    <div class="alert alert-danger fixed-top alert-dismissible" v-if="error" role="alert">
+    <div v-if="error" class="alert alert-danger fixed-top alert-dismissible" role="alert">
       <i class="bi-exclamation-triangle-fill"></i>
       Oops. Something went wrong
-      <button type="button" class="btn-close" aria-label="Close" @click="error = null"></button>
+      <button aria-label="Close" class="btn-close" type="button" @click="error = null"></button>
     </div>
   </transition>
   <div class="container-fluid">
     <router-view></router-view>
   </div>
-  <div class="dev-screen-size" v-if="devMode">
+  <div v-if="devMode" class="dev-screen-size">
     <div class="d-block d-sm-none">Screen: XS</div>
     <div class="d-none d-sm-block d-md-none">Screen: SM</div>
     <div class="d-none d-md-block d-lg-none">Screen: MD</div>
@@ -21,11 +21,11 @@
 </template>
 
 <script>
-import { computed, watch, onMounted, onUnmounted, onBeforeMount, onErrorCaptured, ref } from 'vue'
-import { useStore } from 'vuex'
-import { useRoute, useRouter } from 'vue-router'
 import AuthenticationApi from '@/api/AuthenticationApi'
 import Promise from 'promise-polyfill'
+import { computed, onBeforeMount, onErrorCaptured, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
 export default {
   name: 'App',

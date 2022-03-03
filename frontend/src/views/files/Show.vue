@@ -1,6 +1,18 @@
 <template>
   <div class="row">
     <div class="col">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <router-link :to="{name: 'Home', params: {filter: 'newest'}}">Home</router-link>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">{{ file ? file.name : 'File info' }}</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
       <div id="boo"></div>
     </div>
   </div>
@@ -21,7 +33,7 @@
           </h1>
         </blockquote>
         <p>
-          Uploaded by: {{file.createdBy.name}}
+          Uploaded by: {{ file.createdBy.name }}
         </p>
         <figcaption class="blockquote-footer">
           {{ file.description }}
@@ -29,33 +41,23 @@
       </figure>
     </div>
   </div>
-  <div class="row justify-content-center">
-    <div class="col-md-10 col-11">
-      <midi-player
-        ref="player"
-        sound-font>
-      </midi-player>
-      <midi-visualizer
-        ref="visualizer"
-        type="staff">
-      </midi-visualizer>
-    </div>
-  </div>
+  <AbcNotation :abc="file.abc" v-if="file"/>
 </template>
 
 <script>
 
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import AbcNotation from '@/components/common/AbcNotation'
 import FilesApi from '@/api/FilesApi'
 
 export default {
   name: 'Show',
+  components: {
+    AbcNotation
+  },
   setup () {
     const file = ref(null)
-    const player = ref(null)
-    const visualizer = ref(null)
-    const panel = ref(null)
     const loading = ref(false)
     const route = useRoute()
     const fileId = computed(() => {
@@ -68,19 +70,6 @@ export default {
         const response = await FilesApi.get(fileId.value)
         file.value = response.data
         document.title = `${file.value.name} - MIDI Storage`
-        if (player.value) {
-          player.value.src = response.data.url
-          player.value.addVisualizer(visualizer.value)
-          visualizer.value.src = response.data.url
-          visualizer.value.config = {
-            noteHeight: 15,
-            pixelsPerTimeStep: 150,
-            minPitch: 1300,
-            noteRGB: '44,119,246,1',
-            activeNoteRGB: '203,56,55,1',
-            scrollType: 1
-          }
-        }
       } catch (e) {
         if (e.response && e.response.status === 404) {
           file.value = null
@@ -92,28 +81,15 @@ export default {
       }
     }
 
-    watch(route, () => {
-      player.value.stop()
-    })
-
     getFile()
-
-    const getTitle = () => {
-      return file.value.name
-    }
 
     return {
       file,
-      panel,
-      player,
-      visualizer,
-      loading,
-      getTitle
+      loading
     }
   }
 }
 </script>
-
 <style scoped>
 small {
   font-size: 0.5em;

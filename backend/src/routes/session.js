@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const config = require('../config/config')
 const { ValidationError } = require('sequelize')
+const { renderValidationErrors } = require('./common')
 const router = express.Router()
 
 router.post('/authenticate', async (req, res) => {
@@ -61,13 +62,7 @@ router.post('/signUp', async (req, res) => {
       })
   } catch (ex) {
     if (ex instanceof ValidationError) {
-      const response = {}
-      ex.errors.forEach((error) => {
-        response[error.path] = ex.get(error.path).map(m => m.message)
-      })
-      return res
-        .status(422)
-        .send(response)
+      return renderValidationErrors(ex, res)
     } else {
       throw ex
     }

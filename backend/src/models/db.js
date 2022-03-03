@@ -9,7 +9,7 @@ const logger = (sql, info) => {
 
 const sequelize = new Sequelize(databaseURL, {
   logQueryParameters: true,
-  // eslint-disable-next-line no-undef
-  logging: process.env.NODE_ENV === 'production' ? false : logger
+  logging: logger,
+  timezone: process.env.TZ
 })
 module.exports = sequelize

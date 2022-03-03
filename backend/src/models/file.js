@@ -1,4 +1,6 @@
-const { DataTypes } = require('sequelize')
+const { DataTypes,
+  Op
+} = require('sequelize')
 const BaseModel = require('./baseModel')
 const config = require('../config/config')
 const sequelize = require('./db')
@@ -26,6 +28,10 @@ File.init({
       ...validateString(true, null)
     }
   },
+  abc: {
+    type: DataTypes.TEXT,
+    ...validateString(true, null)
+  },
   views: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -42,26 +48,55 @@ File.init({
     validate: {
       ...validateString(true, 255)
     }
+  },
+  status: {
+    type: DataTypes.ENUM('new', 'blocked', 'moderated'),
+    allowNull: false,
+    defaultValue: 'new',
+    validate: {
+      ...validateString(true, 255)
+    }
   }
 }, {
-  sequelize
+  sequelize,
+  scopes: {
+    moderated: {
+      where: {
+        status: 'moderated'
+      }
+    },
+    createdBy(userId) {
+      return {
+        where: {
+          createdById: userId
+        }
+      }
+    },
+    forUser(userId) {
+      return {
+        where: {
+          [Op.or]: [
+            {createdById: userId},
+            {status: 'moderated'}
+          ]
+        }
+      }
+    }
+  }
 })
 
 User.files = User.hasMany(File, {
   as: 'files',
-  constraints: false,
   foreignKey: {
     name: 'createdById',
     allowNull: false
   }
 })
-File.belongsTo(User, {
-  as: 'createdBy',
-  constraints: false
+File.createdBy = File.belongsTo(User, {
+  as: 'createdBy'
 })
 
-module.exports = File
-module.exports.serializerScheme = {
+File.serializerScheme = {
   include: ['@all', 'url', 'createdBy'],
   exclude: ['createdById'],
   assoc: {
@@ -70,3 +105,5 @@ module.exports.serializerScheme = {
     }
   }
 }
+
+module.exports = File

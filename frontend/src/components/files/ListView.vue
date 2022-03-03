@@ -4,7 +4,8 @@
         :key="file.id">
       <div class="ms-2 me-auto">
         <div class="fw-bold">
-          <router-link :to="{name: 'File', params: { id: file.id }}">{{ file.name }}</router-link>
+          <router-link :class="file.status !== 'moderated' ? 'text-muted' : ''" :to="{name: 'File', params: { id: file.id }}">{{ file.name }}</router-link>
+          <span class="badge bg-secondary ms-1" v-if="file.status !== 'moderated'">on moderation</span>
         </div>
         <span class="badge rounded-pill bg-light text-dark" title="views">
           <i class="bi-eye"></i>
